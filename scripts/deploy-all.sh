@@ -71,11 +71,17 @@ setup_ui_pages
 tag_push "$UI_DIR" "$TAG_UI"
 tag_push "$ROOT" "$TAG_CLI"
 
-if [[ -n "${NPM_OTP:-}" ]]; then
-  info "── npm publish create-looper-app@${CLI_VER} ──"
-  bash "$ROOT/scripts/ship-create-looper-app.sh"
-else
-  warn "npm: set NPM_OTP=… in env to publish, or add NPM_TOKEN on GitHub (tag $TAG_CLI → Actions)"
+NPM_VER="$(npm view create-looper-app version 2>/dev/null || echo '0')"
+if [[ "$NPM_VER" != "$CLI_VER" ]]; then
+  if [[ -n "${NPM_OTP:-}" ]]; then
+    info "── npm publish create-looper-app@${CLI_VER} ──"
+    bash "$ROOT/scripts/ship-create-looper-app.sh"
+  else
+    echo ""
+    echo "  npx create-looper-app@latest needs npm ${CLI_VER} (now: ${NPM_VER})"
+    echo "  Run once:  NPM_OTP=123456 npm run deploy"
+    echo ""
+  fi
 fi
 
 info "── verify ──"
