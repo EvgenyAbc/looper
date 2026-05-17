@@ -25,6 +25,7 @@
     "scaffold:embed": "node scripts/scaffold-mf-embed.mjs",
     "create-app": "node create-looper-app/bin/create-looper-app.js",
     "ship:cli": "bash scripts/ship-create-looper-app.sh",
+    "deploy": "bash scripts/deploy-all.sh",
     "lint": "eslint .",
     "build:csp": "node scripts/build-csp.mjs",
     "lint:fix": "npm run lint -- --fix",

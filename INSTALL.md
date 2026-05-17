@@ -1,5 +1,19 @@
 # Установка Looper — без боли
 
+## Запушить оба репо на GitHub (одна команда)
+
+```bash
+cd looper && npm run deploy
+```
+
+С тегами (ui-looper CDN + npm CLI через Actions):
+
+```bash
+cd looper && npm run deploy -- --tag-ui v1.0.0 --tag-cli cli-v1.0.1
+```
+
+Ветка **`main`**, не `master`.
+
 ## Сейчас (без npm publish)
 
 Одна команда — wizard как `npx create-looper-app`, тянет с GitHub:

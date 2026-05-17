@@ -16,7 +16,8 @@ npx create-looper-app@latest
 ## Push changes
 
 ```bash
-cd looper && git add -A && git commit -m "..." && git push origin master
+cd looper && npm run deploy
+# or: git push origin main
 cd ui-looper && git add -A && git commit -m "..." && git push origin main
 ```
 
