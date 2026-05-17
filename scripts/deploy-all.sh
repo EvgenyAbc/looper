@@ -10,6 +10,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UI_DIR="${UI_LOOPER_DIR:-$(dirname "$ROOT")/ui-looper}"
 
+# GitHub slugs (override if you forked)
+LOOPER_REMOTE="${LOOPER_REMOTE:-https://github.com/EvgenyAbc/looper.git}"
+UI_LOOPER_REMOTE="${UI_LOOPER_REMOTE:-https://github.com/EvgenyAbc/ui-looper.git}"
+
 TAG_UI=""
 TAG_CLI=""
 SKIP_VERIFY=0
@@ -36,15 +40,27 @@ info() { echo -e "${GREEN}[deploy]${NC} $*"; }
 warn() { echo -e "${CYAN}[deploy]${NC} $*"; }
 fail() { echo -e "${RED}[deploy]${NC} $*" >&2; exit 1; }
 
+ensure_origin() {
+  local dir="$1"
+  local url="$2"
+  cd "$dir"
+  if ! git remote get-url origin >/dev/null 2>&1; then
+    git remote add origin "$url"
+    warn "Added origin → $url"
+  fi
+}
+
 push_repo() {
   local dir="$1"
   local msg="$2"
+  local remote_url="$3"
   local name
   name="$(basename "$dir")"
 
   [[ -d "$dir/.git" ]] || fail "Not a git repo: $dir"
 
   info "── $name ──"
+  ensure_origin "$dir" "$remote_url"
   cd "$dir"
   local branch
   branch="$(git rev-parse --abbrev-ref HEAD)"
@@ -76,8 +92,8 @@ tag_repo() {
   fi
 }
 
-push_repo "$ROOT" "${DEPLOY_MSG:-chore: deploy looper}"
-push_repo "$UI_DIR" "${DEPLOY_MSG_UI:-chore: deploy ui-looper}"
+push_repo "$ROOT" "${DEPLOY_MSG:-chore: deploy looper}" "$LOOPER_REMOTE"
+push_repo "$UI_DIR" "${DEPLOY_MSG_UI:-chore: deploy ui-looper}" "$UI_LOOPER_REMOTE"
 
 [[ -n "$TAG_UI" ]] && tag_repo "$UI_DIR" "$TAG_UI"
 [[ -n "$TAG_CLI" ]] && tag_repo "$ROOT" "$TAG_CLI"
