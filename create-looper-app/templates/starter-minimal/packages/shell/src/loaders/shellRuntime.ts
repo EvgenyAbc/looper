@@ -45,16 +45,7 @@ export function initMfRemotes(menuData: AppConfig): void {
     }
   }
 
-  for (const app of menuData.system ?? []) {
-    const name = appMfContainerName(app);
-    if (!remotesDedup.has(name)) {
-      remotesDedup.set(name, {
-        name,
-        entry: app.entry,
-        alias: name,
-      });
-    }
-  }
+  // System remotes (e.g. ui-looper) register lazily via @looper/shared — shell boots without :3030.
 
   init({
     name: 'shell',

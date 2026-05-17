@@ -4,31 +4,14 @@
 npx create-looper-app@latest
 ```
 
-Or:
+## Publish once (maintainer)
+
+npm requires 2FA — one command from **looper** repo root:
 
 ```bash
-npm create looper-app@latest
+NPM_OTP=123456 npm run ship:cli
 ```
 
-Interactive wizard: project name → template → ui-looper (none / GitHub CDN / local) → Docker → git init.
+Get `123456` from your authenticator (npm account → 2FA enabled).
 
-## Flags
-
-```bash
-npx create-looper-app@latest my-app -- --template minimal --ui cdn --ui-version v1.0.0 --docker compose
-```
-
-| Flag | Values |
-|------|--------|
-| `--ui` | `none`, `cdn`, `local` |
-| `--docker` | `none`, `compose` |
-
-## Maintainer: publish to npm (once)
-
-```bash
-cd create-looper-app
-npm login
-npm publish --access public
-```
-
-After that, users only need `npx create-looper-app@latest`.
+If not logged in: `npm login` first.

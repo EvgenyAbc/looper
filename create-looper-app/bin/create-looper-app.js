@@ -24,6 +24,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = join(__dirname, '..');
 const TEMPLATES = join(PKG_ROOT, 'templates');
 const UI_PARTIALS = join(TEMPLATES, 'partials/ui-looper-shared');
+const UI_LOOPER_PAGES = 'https://evgenyabc.github.io/ui-looper';
 
 function parseArgs(argv) {
   const out = {
@@ -133,25 +134,14 @@ function applyUiLooper(targetDir, ui, uiVersion) {
     writeFileSync(idx, exp, 'utf8');
   }
 
-  const shellRt = join(targetDir, 'packages/shell/src/loaders/shellRuntime.ts');
-  let rt = readFileSync(shellRt, 'utf8');
-  if (!rt.includes('loadUILooperStyles')) {
-    rt = rt.replace(
-      "import { appMfContainerName } from '@looper/shared';",
-      "import { appMfContainerName, loadUILooperStyles } from '@looper/shared';",
-    );
-    rt = rt.replace(
-      '  mfInitialized = true;\n}',
-      `  mfInitialized = true;\n\n  loadUILooperStyles().catch(() => {});\n}`,
-    );
-    writeFileSync(shellRt, rt, 'utf8');
-  }
-
   if (ui === 'local') {
     const pkgPath = join(targetDir, 'package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    pkg.scripts['dev:ui'] =
-      'echo "Start ui-looper: cd ../ui-looper && npm run dev" && echo "remoteEntry: http://localhost:3030/remoteEntry.js"';
+    const coreDev = pkg.scripts.dev;
+    pkg.scripts['dev:core'] = coreDev;
+    pkg.scripts['dev:ui'] = 'bash scripts/start-ui-looper.sh';
+    pkg.scripts.dev =
+      'concurrently -k -n ui,looper -c magenta,blue,green,red "bash scripts/start-ui-looper.sh" "npm run dev:core"';
     writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
   }
 }
@@ -357,7 +347,13 @@ async function main() {
   }
 
   const steps = [`cd ${projectName}`, 'npm run dev    → http://localhost:3000'];
-  if (ui === 'local') steps.push('In another terminal: ui-looper on :3030 (see README)');
+  if (ui === 'local') {
+    steps.push('Clone ui-looper: git clone https://github.com/EvgenyAbc/ui-looper.git ../ui-looper');
+    steps.push('npm run dev starts shell + ui-looper (:3030) when ../ui-looper exists');
+  }
+  if (ui === 'cdn') {
+    steps.push('CDN needs GitHub Pages on ui-looper (tag v*). Until then use --ui local.');
+  }
   if (docker === 'compose') steps.push('npm run docker:up');
   if (ui === 'cdn') steps.push(`UI remote: ${uiLooperEntry(ui, uiVersion)}`);
 

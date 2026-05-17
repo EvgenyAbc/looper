@@ -31,7 +31,7 @@
  * ```
  */
 import { type ComponentType, type ReactNode,Suspense, use, useMemo } from 'react';
-import { loadRemote } from '@module-federation/enhanced/runtime';
+import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime';
 
 import type {
   UIBadgeProps,
@@ -77,16 +77,39 @@ export type {
 
 const REMOTE_NAME = 'ui_looper' as const;
 
+let remoteRegistered = false;
+
+/** Registers ui_looper from mock-menu `system` entry (lazy — shell does not need :3030 at boot). */
+export async function ensureUiLooperRemote(): Promise<boolean> {
+  if (remoteRegistered) return true;
+  try {
+    const res = await fetch('/mock-menu.json');
+    if (!res.ok) return false;
+    const menu = (await res.json()) as {
+      system?: Array<{ id?: string; remoteName?: string; entry?: string }>;
+    };
+    const item = menu.system?.find(
+      (s) => s.remoteName === REMOTE_NAME || s.id === 'ui-looper',
+    );
+    if (!item?.entry) return false;
+    registerRemotes([{ name: REMOTE_NAME, entry: item.entry, alias: REMOTE_NAME }]);
+    remoteRegistered = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ── Загрузка стилей ─────────────────────────────────────────
 
 let stylesLoaded = false;
 
 /**
  * Загружает дизайн-токены и базовые стили @ui-looper/core через MF runtime.
- * Вызывается однократно при старте shell-приложения.
  */
 export async function loadUILooperStyles(): Promise<void> {
   if (stylesLoaded) return;
+  if (!(await ensureUiLooperRemote())) return;
   stylesLoaded = true;
 
   try {
@@ -103,6 +126,16 @@ export async function loadUILooperStyles(): Promise<void> {
   }
 }
 
+function loadUiModule<T>(modulePath: string): Promise<{ default: T } | null> {
+  const key = modulePath.replace(/^\.\//, '');
+  return ensureUiLooperRemote()
+    .then((ok) => (ok ? loadRemote<{ default: T }>(`${REMOTE_NAME}/${key}`) : null))
+    .catch((err) => {
+      console.warn(`[ui-looper] Failed to load ${modulePath}:`, err);
+      return null;
+    });
+}
+
 // ── Хук для загрузки компонента ─────────────────────────────
 
 /**
@@ -114,11 +147,8 @@ export async function loadUILooperStyles(): Promise<void> {
 export function useUILooperComponent<T = ComponentType<unknown>>(
   modulePath: string,
 ): { default: T } | null {
-  const loadPromise = useMemo(
-    () => loadRemote<{ default: T }>(`${REMOTE_NAME}/${modulePath.replace(/^\.\//, '')}`),
-    [modulePath],
-  );
-  return use(loadPromise) ?? null;
+  const loadPromise = useMemo(() => loadUiModule<T>(modulePath), [modulePath]);
+  return use(loadPromise);
 }
 
 // ── Готовые компоненты-обёртки ──────────────────────────────

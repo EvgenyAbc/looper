@@ -31,13 +31,19 @@ Use this repo as a reference for:
 
 ## Start a new project
 
+**Right now** (no npm needed):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/run-create-looper-app.sh | bash
+```
+
+**After npm publish:**
+
 ```bash
 npx create-looper-app@latest
 ```
 
-Wizard: project name → template → **ui-looper (none / GitHub CDN / local)** → Docker → git init.
-
-See [create-looper-app/README.md](create-looper-app/README.md).
+See [INSTALL.md](INSTALL.md) — one-time GitHub secret `NPM_TOKEN` + `git tag cli-v1.0.0 && git push origin cli-v1.0.0`.
 
 ## Quick start (reference demo)
 

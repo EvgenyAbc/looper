@@ -1,0 +1,42 @@
+# Publish create-looper-app to npm (no local OTP).
+#
+# One-time setup:
+#   1. npmjs.com → Access Tokens → Granular → Publish → create-looper-app
+#   2. GitHub EvgenyAbc/looper → Settings → Secrets → NPM_TOKEN
+#
+# Then:
+#   git tag cli-v1.0.0 && git push origin cli-v1.0.0
+#
+# Enables: npx create-looper-app@latest
+
+name: Publish create-looper-app
+
+on:
+  push:
+    tags:
+      - 'cli-v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: create-looper-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Done
+        run: echo "Published. Test with: npx create-looper-app@latest"
