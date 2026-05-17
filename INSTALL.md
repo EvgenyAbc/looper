@@ -1,64 +1,40 @@
-# Установка Looper — без боли
+# Looper — как запустить
 
-## Запушить оба репо на GitHub (одна команда)
-
-```bash
-cd looper && npm run deploy
-```
-
-С тегами (ui-looper CDN + npm CLI через Actions):
+## Скинь коллеге
 
 ```bash
-cd looper && npm run deploy -- --tag-ui v1.0.0 --tag-cli cli-v1.0.1
+npx create-looper-app@latest my-app -- --ui cdn --ui-version v1.0.0
+cd my-app && npm run dev
 ```
 
-Ветка **`main`**, не `master`.
+Браузер: **http://localhost:3000**
 
-## Сейчас (без npm publish)
+Пока на npm старая `1.0.0` — флаги `--ui cdn` **обязательны**. После `1.0.2` достаточно `npx create-looper-app@latest`.
 
-Одна команда — wizard как `npx create-looper-app`, тянет с GitHub:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/run-create-looper-app.sh | bash
-```
-
-С именем проекта:
+**Без npm** (всегда свежий CLI с GitHub):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/run-create-looper-app.sh | bash -s -- my-app
+cd my-app && npm run dev
 ```
 
-## Чтобы работало `npx create-looper-app@latest`
+---
 
-**Один раз** (без OTP на каждый publish):
+## Уже создал проект и ошибка `:3030`?
 
-1. https://www.npmjs.com → **Access Tokens** → **Granular Access Token**
-   - Permissions: **Read and write**
-   - Packages: `create-looper-app` (or all)
-   - Enable **Automation** / bypass 2FA for publish (if offered)
+В `packages/shell/public/mock-menu.json` замени entry:
 
-2. https://github.com/EvgenyAbc/looper → **Settings** → **Secrets** → **Actions** → New secret:
-   - Name: `NPM_TOKEN`
-   - Value: paste token
-
-3. В терминале:
-
-```bash
-cd looper
-git add -A && git commit -m "chore: publish CLI via Actions" && git push
-git tag cli-v1.0.0 && git push origin cli-v1.0.0
+```json
+"entry": "https://evgenyabc.github.io/ui-looper/v1.0.0/remoteEntry.js"
 ```
 
-4. Открой **Actions** на GitHub — дождись зелёной галочки.
+Перезапусти `npm run dev`.
 
-5. Проверка:
+---
 
-```bash
-npx create-looper-app@latest
-```
-
-## Локальный publish (если всё же с OTP)
+## Maintainer
 
 ```bash
-NPM_OTP=123456 npm run ship:cli
+cd looper && npm run deploy
+npm run deploy -- --tag-ui v1.0.0 --tag-cli cli-v1.0.2
 ```

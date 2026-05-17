@@ -18,4 +18,8 @@ echo "→ install CLI deps…"
 npm install --omit=dev --no-audit --no-fund --silent
 
 echo "→ create-looper-app…"
-exec node bin/create-looper-app.js "$@"
+has_ui=0
+for a in "$@"; do [[ "$a" == "--ui" ]] && has_ui=1 && break; done
+EXTRA=()
+[[ "$has_ui" -eq 0 ]] && EXTRA=(--ui cdn --ui-version v1.0.0)
+exec node bin/create-looper-app.js "${EXTRA[@]}" "$@"

@@ -244,13 +244,14 @@ async function main() {
     ui = await p.select({
       message: 'UI kit (@ui-looper/core)?',
       options: [
+        { value: 'cdn', label: 'ui-looper via CDN', hint: 'recommended — no :3030' },
         { value: 'none', label: 'No UI kit', hint: 'MF shell only' },
-        { value: 'cdn', label: 'ui-looper via CDN', hint: 'jsDelivr — no extra process' },
-        { value: 'local', label: 'ui-looper local', hint: 'run ui-looper on :3030' },
+        { value: 'local', label: 'ui-looper local', hint: 'dev only — clone ../ui-looper' },
       ],
+      initialValue: 'cdn',
     });
   }
-  ui ||= 'none';
+  ui ||= 'cdn';
   if (p.isCancel(ui)) process.exit(0);
 
   let uiVersion = args.uiVersion || 'v1.0.0';
