@@ -1,12 +1,17 @@
 # Looper
 
+**Установка (одна команда):**
+
 ```bash
-npx create-looper-app@latest
-cd <проект> && npm run dev
+curl -fsSL https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/install-looper.sh | bash
 ```
 
-http://localhost:3000
+Имя проекта: `… | bash -s -- my-app`
 
----
+**Деплой (одна команда, из репо looper):**
 
-Maintainer: `cd looper && npm run deploy`
+```bash
+npm run deploy
+```
+
+Опционально сразу на npm: `NPM_OTP=123456 npm run deploy`

@@ -32,11 +32,10 @@ Use this repo as a reference for:
 ## Start a new project
 
 ```bash
-npx create-looper-app@latest
-cd <project> && npm run dev
+curl -fsSL https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/install-looper.sh | bash
 ```
 
-http://localhost:3000 — see **[INSTALL.md](INSTALL.md)**
+→ http://localhost:3000 — **[INSTALL.md](INSTALL.md)**
 
 ## Quick start (reference demo)
 
