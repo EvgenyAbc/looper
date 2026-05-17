@@ -18,7 +18,7 @@ import {
 import { basename, dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import * as p from '@clack/prompts';
-import { spawnSync } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = join(__dirname, '..');
@@ -34,6 +34,7 @@ function parseArgs(argv) {
     docker: '',
     uiVersion: '',
     install: true,
+    start: undefined,
     git: '',
   };
   const positional = [];
@@ -44,6 +45,8 @@ function parseArgs(argv) {
     else if (a === '--docker') out.docker = argv[++i] ?? '';
     else if (a === '--ui-version') out.uiVersion = argv[++i] ?? '';
     else if (a === '--no-install') out.install = false;
+    else if (a === '--no-start') out.start = false;
+    else if (a === '--start') out.start = true;
     else if (a === '--git') out.git = argv[++i] ?? 'yes';
     else if (!a.startsWith('-')) positional.push(a);
   }
@@ -273,6 +276,21 @@ async function main() {
     const s = p.spinner();
     s.start('git init…');
     s.stop(runGitInit(targetDir) ? 'Git repository initialized' : 'git init skipped');
+  }
+
+  const shouldStart =
+    args.start === true ||
+    (args.start !== false && args.install && isInteractive && process.stdin.isTTY);
+
+  if (shouldStart) {
+    p.outro(`http://localhost:3000 — ${projectName}`);
+    const child = spawn('npm', ['run', 'dev'], {
+      cwd: targetDir,
+      stdio: 'inherit',
+      shell: process.platform === 'win32',
+    });
+    child.on('exit', (code) => process.exit(code ?? 0));
+    return;
   }
 
   p.note([`cd ${projectName}`, 'npm run dev'].join('\n'), 'Next');
