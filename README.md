@@ -31,16 +31,12 @@ Use this repo as a reference for:
 
 ## Start a new project
 
-Tell people:
-
 ```bash
 npx create-looper-app@latest
 cd <project> && npm run dev
 ```
 
-Pick **ui-looper via CDN** in the wizard. Open http://localhost:3000
-
-Full copy-paste text: **[INSTALL.md](INSTALL.md)**
+http://localhost:3000 — see **[INSTALL.md](INSTALL.md)**
 
 ## Quick start (reference demo)
 

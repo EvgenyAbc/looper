@@ -211,27 +211,7 @@ async function main() {
       ? resolve(nameArg)
       : resolve(process.cwd(), projectName);
 
-  let template = args.template;
-  if (!template && isInteractive) {
-    template = await p.select({
-      message: 'What do you need?',
-      options: [
-        {
-          value: 'minimal',
-          label: 'New MF app (minimal)',
-          hint: 'shell + 1 remote — for production projects',
-        },
-        {
-          value: 'full-demo',
-          label: 'Full reference demo',
-          hint: 'clone looper repo with app1–4, embeds, e2e',
-        },
-      ],
-    });
-  }
-  template ||= 'minimal';
-  if (p.isCancel(template)) process.exit(0);
-
+  const template = args.template || 'minimal';
   if (template === 'full-demo') {
     const repo = 'https://github.com/EvgenyAbc/looper.git';
     p.log.info(`Clone the reference monorepo:\n  git clone ${repo}\n  cd looper && npm install && npm run dev`);
@@ -239,69 +219,17 @@ async function main() {
     process.exit(0);
   }
 
-  let ui = args.ui;
-  if (!ui && isInteractive) {
-    ui = await p.select({
-      message: 'UI kit (@ui-looper/core)?',
-      options: [
-        { value: 'cdn', label: 'ui-looper via CDN', hint: 'recommended — no :3030' },
-        { value: 'none', label: 'No UI kit', hint: 'MF shell only' },
-        { value: 'local', label: 'ui-looper local', hint: 'dev only — clone ../ui-looper' },
-      ],
-      initialValue: 'cdn',
-    });
-  }
-  ui ||= 'cdn';
-  if (p.isCancel(ui)) process.exit(0);
-
-  let uiVersion = args.uiVersion || 'v1.0.0';
-  if (ui === 'cdn' && isInteractive && !args.uiVersion) {
-    uiVersion = await p.text({
-      message: 'ui-looper GitHub tag',
-      initialValue: 'v1.0.0',
-      validate: (v) => (/^v?\d+\.\d+\.\d+/.test(v ?? '') ? undefined : 'tag e.g. v1.0.0'),
-    });
-    if (p.isCancel(uiVersion)) process.exit(0);
-  }
-
-  let docker = args.docker;
-  if (!docker && isInteractive) {
-    docker = await p.select({
-      message: 'Docker (production compose)?',
-      options: [
-        { value: 'compose', label: 'Yes — docker compose', hint: 'recommended' },
-        { value: 'none', label: 'No' },
-      ],
-    });
-  }
-  docker ||= 'compose';
-  if (p.isCancel(docker)) process.exit(0);
-
-  let runGit = args.git === 'yes' || args.git === '';
-  if (isInteractive && !args.git) {
-    runGit = await p.confirm({ message: 'Initialize git repository?', initialValue: true });
-    if (p.isCancel(runGit)) process.exit(0);
-  }
+  // Defaults that work out of the box (override with --ui / --docker / --git)
+  const ui = args.ui || 'cdn';
+  const uiVersion = args.uiVersion || 'v1.0.0';
+  const docker = args.docker || 'compose';
+  const runGit = args.git !== 'no';
 
   if (existsSync(targetDir)) {
     p.cancel(`Directory already exists: ${targetDir}`);
     process.exit(1);
   }
 
-  if (isInteractive) {
-    const summary = [
-      `Project: ${projectName}`,
-      `Path: ${targetDir}`,
-      `UI: ${ui}${ui === 'cdn' ? ` (@${uiVersion})` : ''}`,
-      `Docker: ${docker}`,
-      `Git: ${runGit ? 'yes' : 'no'}`,
-    ].join('\n');
-    const ok = await p.confirm({ message: `Create project?\n\n${summary}`, initialValue: true });
-    if (p.isCancel(ok) || !ok) {
-      p.cancel('Cancelled');
-      process.exit(0);
-    }
-  }
 
   const replace = (text) =>
     text
@@ -347,18 +275,7 @@ async function main() {
     s.stop(runGitInit(targetDir) ? 'Git repository initialized' : 'git init skipped');
   }
 
-  const steps = [`cd ${projectName}`, 'npm run dev    → http://localhost:3000'];
-  if (ui === 'local') {
-    steps.push('Clone ui-looper: git clone https://github.com/EvgenyAbc/ui-looper.git ../ui-looper');
-    steps.push('npm run dev starts shell + ui-looper (:3030) when ../ui-looper exists');
-  }
-  if (ui === 'cdn') {
-    steps.push('CDN needs GitHub Pages on ui-looper (tag v*). Until then use --ui local.');
-  }
-  if (docker === 'compose') steps.push('npm run docker:up');
-  if (ui === 'cdn') steps.push(`UI remote: ${uiLooperEntry(ui, uiVersion)}`);
-
-  p.note(steps.join('\n'), 'Next steps');
+  p.note([`cd ${projectName}`, 'npm run dev'].join('\n'), 'Next');
   p.outro(`Done — ${projectName}`);
 }
 
