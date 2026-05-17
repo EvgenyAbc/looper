@@ -35,7 +35,7 @@ Use this repo as a reference for:
 npx create-looper-app@latest
 ```
 
-→ **[INSTALL.md](INSTALL.md)**
+→ **[INSTALL.md](INSTALL.md)** (первый раз maintainer: `cd create-looper-app && npm publish --access public`)
 
 ## Quick start (reference demo)
 

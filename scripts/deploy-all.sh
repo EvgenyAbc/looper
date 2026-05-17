@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Maintainer: push GitHub + release CDN + publish CLI tag. No arguments.
+# Push looper + ui-looper + CDN tag. No npm.
 #   cd looper && npm run deploy
 set -euo pipefail
 
@@ -60,42 +60,26 @@ tag_push() {
 }
 
 UI_VER="$(node -p "require('$UI_DIR/package.json').version")"
-CLI_VER="$(node -p "require('$ROOT/create-looper-app/package.json').version")"
 TAG_UI="v${UI_VER}"
-TAG_CLI="cli-v${CLI_VER}"
 
 push_repo "$ROOT" "chore: deploy" "$LOOPER_REMOTE"
 push_repo "$UI_DIR" "chore: deploy" "$UI_LOOPER_REMOTE"
 
 setup_ui_pages
 tag_push "$UI_DIR" "$TAG_UI"
-tag_push "$ROOT" "$TAG_CLI"
-
-NPM_VER="$(npm view create-looper-app version 2>/dev/null || echo '0')"
-if [[ "$NPM_VER" != "$CLI_VER" ]]; then
-  if [[ -n "${NPM_OTP:-}" ]]; then
-    info "── npm publish create-looper-app@${CLI_VER} ──"
-    bash "$ROOT/scripts/ship-create-looper-app.sh"
-  else
-    echo ""
-    echo "  npx create-looper-app@latest needs npm ${CLI_VER} (now: ${NPM_VER})"
-    echo "  Run once:  NPM_OTP=123456 npm run deploy"
-    echo ""
-  fi
-fi
 
 info "── verify ──"
-for label in looper ui-looper CDN; do
+for label in looper ui-looper CDN install-script; do
   case "$label" in
     looper) url="https://raw.githubusercontent.com/EvgenyAbc/looper/main/create-looper-app/package.json" ;;
     ui-looper) url="https://raw.githubusercontent.com/EvgenyAbc/ui-looper/main/package.json" ;;
     CDN) url="https://evgenyabc.github.io/ui-looper/remoteEntry.js" ;;
+    install-script) url="https://raw.githubusercontent.com/EvgenyAbc/looper/main/scripts/install-looper.sh" ;;
   esac
   if curl -fsSL "$url" >/dev/null 2>&1; then
     echo "  OK  $label"
   else
-    echo "  …  $label (wait for Actions if just tagged)"
+    echo "  …  $label"
   fi
 done
-npm view create-looper-app version 2>/dev/null | xargs -I{} echo "  npm create-looper-app@{}"
-info "done"
+info "done — install: curl install-looper.sh (see INSTALL.md)"
