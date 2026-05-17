@@ -80,26 +80,33 @@ push_repo() {
   info "Pushed origin/$branch ($name)"
 }
 
+setup_ui_pages() {
+  command -v gh >/dev/null 2>&1 || return 0
+  gh api -X POST repos/EvgenyAbc/ui-looper/pages -f build_type=workflow >/dev/null 2>&1 || true
+  echo '{"name":"v*","type":"tag"}' | gh api --method POST \
+    repos/EvgenyAbc/ui-looper/environments/github-pages/deployment-branch-policies \
+    --input - >/dev/null 2>&1 || true
+}
+
 tag_repo() {
   local dir="$1"
   local tag="$2"
   local name
   name="$(basename "$dir")"
   cd "$dir"
-  if git rev-parse "$tag" >/dev/null 2>&1; then
-    warn "Tag $tag already exists in $name — skip (delete locally to recreate)"
-    git push origin "$tag" 2>/dev/null || true
-  else
-    git tag "$tag"
-    git push origin "$tag"
-    info "Tagged and pushed $tag ($name)"
-  fi
+  git tag -f "$tag"
+  git push origin "$tag" --force
+  info "Tagged and pushed $tag ($name)"
 }
 
 push_repo "$ROOT" "${DEPLOY_MSG:-chore: deploy looper}" "$LOOPER_REMOTE"
 push_repo "$UI_DIR" "${DEPLOY_MSG_UI:-chore: deploy ui-looper}" "$UI_LOOPER_REMOTE"
 
-[[ -n "$TAG_UI" ]] && tag_repo "$UI_DIR" "$TAG_UI"
+if [[ -n "$TAG_UI" ]]; then
+  setup_ui_pages
+  tag_repo "$UI_DIR" "$TAG_UI"
+  warn "CDN: wait for Actions → Release on ui-looper, then re-run deploy to verify"
+fi
 [[ -n "$TAG_CLI" ]] && tag_repo "$ROOT" "$TAG_CLI"
 
 if [[ "$SKIP_VERIFY" -eq 0 ]]; then
