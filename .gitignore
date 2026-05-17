@@ -1,0 +1,25 @@
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+@mf-types/
+**/@mf-types/
+**/.mf/
+tsconfig.tsbuildinfo
+*.log
+.DS_Store
+
+# IDE / agents — never commit
+.opencode/
+.cursor/
+
+# generated
+docker/csp-policy.txt
+docker/csp-header.txt
+
+# e2e
+playwright-report/
+test-results/
+
+# create-looper-app dev
+create-looper-app/test-looper/

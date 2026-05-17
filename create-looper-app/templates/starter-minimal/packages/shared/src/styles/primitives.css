@@ -1,0 +1,297 @@
+/*
+ * Shared UI primitives: layout helpers, cards, buttons, forms bits used by remotes + shell content.
+ * Requires tokens.css on the same document (import tokens before this file).
+ */
+
+.btn:focus-visible,
+.theme-toggle:focus-visible,
+.nav-link:focus-visible {
+  outline-offset: 2px;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.hstack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gap-sm { gap: 0.5rem; }
+.gap-md { gap: 1rem; }
+.mt-sm { margin-top: 0.5rem; }
+.mt-md { margin-top: 1rem; }
+.mt-lg { margin-top: 1.5rem; }
+
+.remote-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.remote-subnav__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.remote-subnav__link:hover {
+  color: var(--fg);
+  background: var(--bg-secondary);
+  text-decoration: none;
+}
+
+.remote-subnav__link.active {
+  color: var(--fg);
+  background: color-mix(in oklch, var(--accent) 14%, var(--card-bg));
+  border-color: color-mix(in oklch, var(--accent) 35%, var(--border));
+}
+
+.mono-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.mono-panel pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  max-height: 18rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.mono-panel__label {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-secondary);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card-bg) 80%, var(--bg));
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-secondary);
+  margin: 1.5rem 0 0.65rem;
+}
+
+.section-title:first-child { margin-top: 0; }
+
+.kv-list {
+  display: grid;
+  gap: 0.5rem 1.5rem;
+}
+
+.kv-row {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  align-items: baseline;
+}
+
+@media (max-width: 520px) {
+  .kv-row { grid-template-columns: 1fr; }
+}
+
+.kv-row dt {
+  color: var(--fg-secondary);
+  font-weight: 500;
+}
+
+.kv-row dd { margin: 0; word-break: break-word; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.toolbar__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--fg-secondary);
+  font-size: 0.95rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklch, var(--card-bg) 90%, var(--bg-secondary));
+}
+
+.counter-card h3 { font-size: 0.95rem; }
+
+/* Buttons (shared/Button.tsx) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-sm  { padding: 0.3rem 0.75rem; font-size: 0.8rem; }
+.btn-md  { padding: 0.5rem 1rem;    font-size: 0.9rem; }
+.btn-lg  { padding: 0.75rem 1.5rem; font-size: 1rem;   }
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border-color: var(--primary);
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.15); }
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--fg);
+  border-color: var(--border);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--border); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--fg);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--bg-secondary); }
+
+/* Cards / pages */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.card p { font-size: 0.9rem; color: var(--fg-secondary); line-height: 1.5; }
+
+.page { max-width: 960px; }
+
+.page h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+.page h2 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+.page .subtitle { color: var(--fg-secondary); margin-bottom: 1rem; }
+
+pre {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow: auto;
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+  border: 1px solid var(--border);
+}
+
+.stat { font-size: 1.75rem; font-weight: 700; }
+
+.badge {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-admin { background: var(--accent); color: var(--accent-fg); }
+.badge-user  { background: var(--bg-secondary); color: var(--fg); }
+
+/* Login / shell forms (minimal — shell pages use these globals) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.field label { font-size: 0.85rem; font-weight: 600; }
+
+.field input, .field select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.field input:focus, .field select:focus {
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   @ui-looper/core demo (паттерны для интеграции с MF)
+   ═══════════════════════════════════════════════════════ */
+
+.ui-looper-loading {
+  padding: 2rem 1rem;
+  color: var(--fg-secondary);
+  font-style: italic;
+}
+
+.ui-kit-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+}
+
+.ui-kit-section:last-child {
+  border-bottom: none;
+}
+
+.ui-kit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}

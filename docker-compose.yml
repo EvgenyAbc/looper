@@ -1,0 +1,72 @@
+# Looper MF stack — production static serve (browser uses localhost ports for remoteEntry).
+# Usage:
+#   docker compose --profile prod up --build
+#   docker compose --profile prod --profile with-ui up --build
+name: looper
+
+services:
+  shell:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.shell
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  app1:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.remote
+      args:
+        PACKAGE: app1
+        PORT: 3002
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+
+  app2:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.remote
+      args:
+        PACKAGE: app2
+        PORT: 3003
+    ports:
+      - "3003:3003"
+    restart: unless-stopped
+
+  app3:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.remote
+      args:
+        PACKAGE: app3
+        PORT: 3004
+    ports:
+      - "3004:3004"
+    restart: unless-stopped
+
+  app4:
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.remote
+      args:
+        PACKAGE: app4
+        PORT: 3005
+    ports:
+      - "3005:3005"
+    restart: unless-stopped
+
+  ui-looper:
+    profiles: [with-ui]
+    build:
+      context: ../ui-looper
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3030"
+    restart: unless-stopped

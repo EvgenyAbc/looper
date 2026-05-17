@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false
+  },
+  "include": ["src", "../../types/css-modules.d.ts"],
+  "exclude": ["src/tests", "src/**/*.test.ts", "src/**/*.test.tsx"]
+}

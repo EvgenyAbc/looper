@@ -1,0 +1,11 @@
+node_modules
+**/dist
+**/@mf-types
+**/.mf
+.git
+*.log
+.DS_Store
+e2e/test-results
+playwright-report
+docker/csp-policy.txt
+docker/csp-header.txt

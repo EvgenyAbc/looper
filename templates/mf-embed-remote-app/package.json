@@ -1,0 +1,32 @@
+{
+  "name": "__PACKAGE_NAME__",
+  "version": "1.0.0",
+  "private": true,
+  "sideEffects": [
+    "**/*.css",
+    "./src/**/*.css"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "bash ../../scripts/mf-remote-dev.sh __PORT__",
+    "build": "rspack build",
+    "start": "serve dist -l __PORT__ -C --no-port-switching",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "@looper/shared": "*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.0.0"
+  },
+  "devDependencies": {
+    "@module-federation/enhanced": "^2.4.0",
+    "@rspack/cli": "^2.0.3",
+    "@rspack/core": "^2.0.3",
+    "@rspack/dev-server": "^2.0.1",
+    "@types/node": "^25.8.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}

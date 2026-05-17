@@ -1,0 +1,1 @@
+read .opencode before plan and coding

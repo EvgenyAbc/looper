@@ -1,0 +1,20 @@
+/* CSS Modules example (shell) — scoped; global layout stays in styles.css */
+.lead {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  margin-top: 0.25rem;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: color-mix(in oklch, var(--accent) 20%, var(--card-bg));
+  color: var(--fg);
+  border: 1px solid color-mix(in oklch, var(--accent) 35%, var(--border));
+}

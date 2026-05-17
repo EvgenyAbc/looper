@@ -1,0 +1,18 @@
+{
+  "shared": { "id": "shared", "entry": "" },
+  "apps": [
+    {
+      "id": "app1",
+      "name": "App One",
+      "entry": "http://localhost:3002/remoteEntry.js",
+      "route": "/app1/*",
+      "module": "./App",
+      "icon": "chart",
+      "features": [],
+      "permissions": ["admin", "user"]
+    }
+  ],
+  "system": [],
+  "features": { "darkMode": true },
+  "endpoints": { "api": "/api/mock", "auth": "/api/mock/auth" }
+}

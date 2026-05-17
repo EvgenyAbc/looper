@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  looper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: node scripts/build-csp.mjs
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx playwright install chromium --with-deps
+      - run: npx playwright test
+
+  create-looper-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - working-directory: create-looper-app
+        run: npm install --no-audit --no-fund
+      - run: node create-looper-app/bin/create-looper-app.js /tmp/test-looper --template minimal --ui cdn --ui-version 1.0.0 --docker none --no-install --git no
+      - run: test -f /tmp/test-looper/package.json

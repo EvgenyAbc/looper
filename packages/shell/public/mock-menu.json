@@ -1,0 +1,87 @@
+{
+  "shared": {
+    "id": "shared",
+    "entry": ""
+  },
+  "apps": [
+    {
+      "id": "app1",
+      "name": "Dashboard",
+      "entry": "http://localhost:3002/remoteEntry.js",
+      "route": "/app1/*",
+      "module": "./App",
+      "icon": "chart",
+      "features": [
+        "dashboard",
+        "analytics"
+      ],
+      "permissions": [
+        "admin",
+        "user"
+      ]
+    },
+    {
+      "id": "app2",
+      "name": "Settings",
+      "entry": "http://localhost:3003/remoteEntry.js",
+      "route": "/app2/*",
+      "module": "./App",
+      "icon": "gear",
+      "features": [
+        "profile",
+        "settings"
+      ],
+      "permissions": [
+        "admin",
+        "user"
+      ]
+    },
+    {
+      "id": "app3",
+      "name": "App three",
+      "entry": "http://localhost:3004/remoteEntry.js",
+      "route": "/app3/*",
+      "module": "./App",
+      "icon": "cube",
+      "features": [],
+      "permissions": [
+        "admin",
+        "user"
+      ]
+    },
+    {
+      "id": "app3-home-widget",
+      "name": "App three widget",
+      "remoteName": "app3",
+      "displayMode": "widget",
+      "widgetSlot": "home",
+      "entry": "http://localhost:3004/remoteEntry.js",
+      "module": "./Widget",
+      "permissions": [
+        "admin",
+        "user"
+      ]
+    }
+  ],
+  "system": [
+    {
+      "id": "ui-looper",
+      "name": "UI Looper",
+      "entry": "http://localhost:3030/remoteEntry.js",
+      "module": "./Button",
+      "remoteName": "ui_looper",
+      "icon": "puzzle",
+      "features": [],
+      "permissions": ["admin", "user"]
+    }
+  ],
+  "features": {
+    "darkMode": true,
+    "notifications": true,
+    "betaFeatures": false
+  },
+  "endpoints": {
+    "api": "/api/mock",
+    "auth": "/api/mock/auth"
+  }
+}
