@@ -72,6 +72,10 @@ push_repo() {
     git commit -m "$msg"
   fi
 
+  git fetch origin "$branch" 2>/dev/null || true
+  if git rev-parse "origin/$branch" >/dev/null 2>&1; then
+    git pull --rebase origin "$branch"
+  fi
   git push -u origin "$branch"
   info "Pushed origin/$branch ($name)"
 }
