@@ -76,28 +76,17 @@ export type {
 // ── Конфигурация remote ─────────────────────────────────────
 
 const REMOTE_NAME = 'ui_looper' as const;
+/** GitHub Pages CDN — never localhost:3030 */
+const UI_LOOPER_ENTRY =
+  'https://evgenyabc.github.io/ui-looper/v1.0.0/remoteEntry.js';
 
 let remoteRegistered = false;
 
-/** Registers ui_looper from mock-menu `system` entry (lazy — shell does not need :3030 at boot). */
 export async function ensureUiLooperRemote(): Promise<boolean> {
   if (remoteRegistered) return true;
-  try {
-    const res = await fetch('/mock-menu.json');
-    if (!res.ok) return false;
-    const menu = (await res.json()) as {
-      system?: Array<{ id?: string; remoteName?: string; entry?: string }>;
-    };
-    const item = menu.system?.find(
-      (s) => s.remoteName === REMOTE_NAME || s.id === 'ui-looper',
-    );
-    if (!item?.entry) return false;
-    registerRemotes([{ name: REMOTE_NAME, entry: item.entry, alias: REMOTE_NAME }]);
-    remoteRegistered = true;
-    return true;
-  } catch {
-    return false;
-  }
+  registerRemotes([{ name: REMOTE_NAME, entry: UI_LOOPER_ENTRY, alias: REMOTE_NAME }]);
+  remoteRegistered = true;
+  return true;
 }
 
 // ── Загрузка стилей ─────────────────────────────────────────
@@ -121,7 +110,7 @@ export async function loadUILooperStyles(): Promise<void> {
       console.log('[ui-looper] Styles loaded');
     }
   } catch (err) {
-    console.warn('[ui-looper] Failed to load styles — is @ui-looper/core running on :3030?', err);
+    console.warn('[ui-looper] Failed to load styles from CDN:', err);
     stylesLoaded = false;
   }
 }

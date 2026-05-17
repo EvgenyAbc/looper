@@ -108,24 +108,10 @@ function uiKitReadme(ui, uiVersion) {
 }
 
 function applyUiLooper(targetDir, ui, uiVersion) {
-  const uiEntry = uiLooperEntry(ui, uiVersion);
-  if (!uiEntry) return;
-
-  const menuPath = join(targetDir, 'packages/shell/public/mock-menu.json');
-  const menu = JSON.parse(readFileSync(menuPath, 'utf8'));
-  menu.system = [
-    {
-      id: 'ui-looper',
-      name: 'UI Looper',
-      entry: uiEntry,
-      module: './Button',
-      remoteName: 'ui_looper',
-      icon: 'puzzle',
-      features: [],
-      permissions: ['admin', 'user'],
-    },
-  ];
-  writeFileSync(menuPath, `${JSON.stringify(menu, null, 2)}\n`, 'utf8');
+  if (ui === 'none') return;
+  if (ui === 'local') {
+    p.log.warn('ui-looper local (:3030) is not supported in this CLI version — using CDN.');
+  }
 
   const sharedSrc = join(targetDir, 'packages/shared/src');
   cpSync(join(UI_PARTIALS, 'uiLooper.tsx'), join(sharedSrc, 'uiLooper.tsx'));
@@ -137,14 +123,11 @@ function applyUiLooper(targetDir, ui, uiVersion) {
     writeFileSync(idx, exp, 'utf8');
   }
 
-  if (ui === 'local') {
-    const pkgPath = join(targetDir, 'package.json');
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    const coreDev = pkg.scripts.dev;
-    pkg.scripts['dev:core'] = coreDev;
-    pkg.scripts['dev:ui'] = 'bash scripts/start-ui-looper.sh';
-    pkg.scripts.dev =
-      'concurrently -k -n ui,looper -c magenta,blue,green,red "bash scripts/start-ui-looper.sh" "npm run dev:core"';
+  const pkgPath = join(targetDir, 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  const dev = pkg.scripts.dev;
+  if (!dev.includes('ensure-ui-cdn')) {
+    pkg.scripts.dev = `node scripts/ensure-ui-cdn.mjs && ${dev}`;
     writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
   }
 }
