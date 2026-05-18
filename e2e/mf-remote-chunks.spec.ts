@@ -56,6 +56,8 @@ test.describe('MF remote chunks (host vs remote)', () => {
   test('network: app1 origin does not serve megabyte vendor chunks', async ({ page }) => {
     /** Max size (bytes) for a non-remoteEntry .js response from app1 — catches accidental react-dom-scale bundles (~177KB). */
     const MAX_NON_REMOTE_ENTRY_JS = 210_000;
+    /** Dev `remoteEntry.js` includes MF dev runtime glue (~145KB); prod is ~43KB. E2E uses `npm run dev` remotes. */
+    const MAX_REMOTE_ENTRY_JS = 160_000;
 
     const responses: { url: string; size: number; basename: string }[] = [];
 
@@ -78,7 +80,7 @@ test.describe('MF remote chunks (host vs remote)', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1500);
-    await page.locator('a[href="/app1"]').click();
+    await page.getByTestId('shell-sidebar-nav').getByRole('link', { name: 'Dashboard' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible({
       timeout: 15_000,
     });
@@ -91,7 +93,7 @@ test.describe('MF remote chunks (host vs remote)', () => {
 
     for (const r of responses) {
       const isRemoteEntry = r.basename.includes('remoteEntry');
-      const max = isRemoteEntry ? 50_000 : MAX_NON_REMOTE_ENTRY_JS;
+      const max = isRemoteEntry ? MAX_REMOTE_ENTRY_JS : MAX_NON_REMOTE_ENTRY_JS;
       expect(
         r.size,
         `app1 ${r.basename} is ${r.size} bytes (cap ${max}) — possible vendor leak: ${r.url}`,

@@ -251,6 +251,7 @@ async function main() {
     const r = spawnSync('npm', ['install', '--no-audit', '--no-fund'], {
       cwd: targetDir,
       stdio: 'inherit',
+      shell: process.platform === 'win32',
     });
     s.stop(r.status === 0 ? 'Dependencies installed' : 'Run npm install manually');
   }

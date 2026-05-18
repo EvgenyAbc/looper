@@ -31,8 +31,10 @@ test.describe('React Context sharing via MF 2.0', () => {
     // Locators
     const counterValue = page.locator('[data-testid="counter-value"]');
 
+    const shellNav = page.getByTestId('shell-sidebar-nav');
+
     // ── 2. Navigate to app1 (client-side via sidebar link) ──
-    await page.locator('a[href="/app1"]').click();
+    await shellNav.getByRole('link', { name: 'Dashboard' }).click();
     await page.waitForLoadState('networkidle');
     await expect(counterValue).toBeVisible({ timeout: 15_000 });
     await expect(counterValue).toHaveText('0', { timeout: 10_000 });
@@ -42,7 +44,7 @@ test.describe('React Context sharing via MF 2.0', () => {
     await expect(counterValue).toHaveText('1');
 
     // ── 4. Navigate to app2 (client-side) → counter is STILL 1 ──
-    await page.locator('a[href="/app2"]').click();
+    await shellNav.getByRole('link', { name: 'Settings' }).click();
     await page.waitForLoadState('networkidle');
     await expect(counterValue).toBeVisible({ timeout: 10_000 });
     await expect(counterValue).toHaveText('1');
@@ -52,13 +54,13 @@ test.describe('React Context sharing via MF 2.0', () => {
     await expect(counterValue).toHaveText('0');
 
     // ── 6. Navigate to app1 → STILL 0 ──
-    await page.locator('a[href="/app1"]').click();
+    await shellNav.getByRole('link', { name: 'Dashboard' }).click();
     await page.waitForLoadState('networkidle');
     await expect(counterValue).toBeVisible({ timeout: 10_000 });
     await expect(counterValue).toHaveText('0');
 
     // ── 7. Navigate to app2 → STILL 0 ──
-    await page.locator('a[href="/app2"]').click();
+    await shellNav.getByRole('link', { name: 'Settings' }).click();
     await page.waitForLoadState('networkidle');
     await expect(counterValue).toBeVisible({ timeout: 10_000 });
     await expect(counterValue).toHaveText('0');

@@ -67,7 +67,7 @@
     {
       "id": "ui-looper",
       "name": "UI Looper",
-      "entry": "http://localhost:3030/remoteEntry.js",
+      "entry": "https://evgenyabc.github.io/ui-looper/v1.0.0/remoteEntry.js",
       "module": "./Button",
       "remoteName": "ui_looper",
       "icon": "puzzle",

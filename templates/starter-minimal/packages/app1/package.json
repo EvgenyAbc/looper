@@ -8,7 +8,7 @@
   ],
   "type": "module",
   "scripts": {
-    "dev": "bash ../../scripts/mf-remote-dev.sh 3002",
+    "dev": "node ../../scripts/mf-remote-dev.mjs 3002",
     "build": "rspack build",
     "start": "serve dist -l 3002 -C --no-port-switching",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"

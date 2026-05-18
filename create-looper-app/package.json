@@ -1,6 +1,6 @@
 {
   "name": "create-looper-app",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Interactive installer for Looper Module Federation 2.0 monorepos",
   "type": "module",
   "bin": {

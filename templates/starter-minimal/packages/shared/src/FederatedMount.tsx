@@ -1,4 +1,4 @@
-import { type ComponentType, type ReactNode,use, useEffect, useMemo } from 'react';
+import { type ComponentType, use, useMemo } from 'react';
 import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime';
 
 import { looperDebugEmbedLoaded } from './looperDebug';
@@ -17,13 +17,6 @@ function ensureRemoteRegistered(remoteName: string, entry: string): void {
   registeredRemoteNames.add(remoteName);
 }
 
-function EmbedLoadedMarker({ remoteName, children }: { remoteName: string; children: ReactNode }) {
-  useEffect(() => {
-    looperDebugEmbedLoaded(remoteName);
-  }, [remoteName]);
-  return <>{children}</>;
-}
-
 export interface FederatedMountProps {
   remoteName: string;
   modulePath: string;
@@ -37,20 +30,17 @@ export interface FederatedMountProps {
  * Parent route should use `path="segment/*"` so nested Routes inside the remote re-match without remount keys.
  */
 export function FederatedMount({ remoteName, modulePath, entry }: FederatedMountProps) {
-  if (entry) {
-    ensureRemoteRegistered(remoteName, entry);
-  }
-
   const normalizedPath = modulePath.replace(/^\.\//, '');
-  const loadPromise = useMemo(
-    () => loadRemote<{ default: ComponentType }>(`${remoteName}/${normalizedPath}`),
-    [remoteName, normalizedPath],
-  );
+  const loadPromise = useMemo(() => {
+    if (entry) {
+      ensureRemoteRegistered(remoteName, entry);
+    }
+    return loadRemote<{ default: ComponentType }>(`${remoteName}/${normalizedPath}`).then((mod) => {
+      if (mod) looperDebugEmbedLoaded(remoteName);
+      return mod;
+    });
+  }, [remoteName, normalizedPath, entry]);
   const Module = use(loadPromise);
   if (!Module) return <div>Failed to load remote module</div>;
-  return (
-    <EmbedLoadedMarker remoteName={remoteName}>
-      <Module.default />
-    </EmbedLoadedMarker>
-  );
+  return <Module.default />;
 }
